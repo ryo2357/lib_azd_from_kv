@@ -1,0 +1,11 @@
+[package]
+name = "cylinder_inspection_machine"
+version = "0.1.0"
+edition = "2021"
+default-run = "azd_test"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+mylogger = {git = "https://github.com/ryo2357/rs-mylogger"}
+azd = { path = "./azd" }
