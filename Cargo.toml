@@ -2,10 +2,22 @@
 name = "cylinder_inspection_machine"
 version = "0.1.0"
 edition = "2021"
-default-run = "azd_test"
+default-run = "connect_plc"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-mylogger = {git = "https://github.com/ryo2357/rs-mylogger"}
+mylogger = { git = "https://github.com/ryo2357/rs-mylogger" }
 azd = { path = "./azd" }
+kv7500 = { path = "./kv7500" }
+
+dotenv = "0.15.0"
+tokio = { version = "1.21.0", features = ["full"] }
+anyhow = "1.0"
+
+
+# Ethernet/ipに挑戦したが諦め
+# rseip="0.3"
+# default-net = { version = "0.16.2" }
+# pnet = { version = "0.34.0" }
+# pnet_datalink = { version = "0.34.0" }
