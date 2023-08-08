@@ -1,6 +1,6 @@
-// use log::info;
+pub(crate) mod client;
+pub(crate) mod config;
+pub(crate) mod connection;
 
-pub mod client;
-pub mod config;
-pub mod connection;
-// pub mod data_structure;
+pub use client::AzdKvDirectClient;
+pub use config::AzdFromKvConfig;

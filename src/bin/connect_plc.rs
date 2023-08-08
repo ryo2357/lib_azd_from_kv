@@ -267,25 +267,28 @@ async fn client_test() -> anyhow::Result<()> {
 }
 
 async fn client_test_2() -> anyhow::Result<()> {
-    // クライアントを管理するスレッドで動かすのがよさそう
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     info!("get config");
     let mut azd = client::AzdKvDirectClient::create(config).await?;
+    info!("クライアント作成完了");
 
     // 動作
-    wait_until_enter();
     azd.throw_command_direct_move(9000, 500).await?;
-
+    info!("動作指令完了");
     azd.wait_start_move().await?;
     azd.throw_command_direct_move_trigger_off(9000, 500).await?;
+    info!("トリガーオフ");
     azd.check_finish_move().await?;
+    info!("動作完了");
 
     azd.throw_command_direct_move(0, 4000).await?;
-
+    info!("基準位置復帰動作指令完了");
     azd.wait_start_move().await?;
     azd.throw_command_direct_move_trigger_off(0, 2000).await?;
+    info!("トリガーオフ");
     azd.check_finish_move().await?;
+    info!("動作完了");
 
     Ok(())
 }
