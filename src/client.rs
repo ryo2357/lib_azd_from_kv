@@ -1,6 +1,6 @@
 use log::{error, info};
 
-use super::config::Kv7500Config;
+use super::config::AzdFromKvConfig;
 use super::connection::HotLinkConnection;
 
 // pub enum CommandResponse {
@@ -10,18 +10,18 @@ use super::connection::HotLinkConnection;
 // }
 
 pub struct AzdKvDirectClient {
-    config: Kv7500Config,
+    // config: AzdFromKvConfig,
     pub connection: HotLinkConnection,
     state: AzdState,
 }
 
 impl AzdKvDirectClient {
-    pub async fn create(config: Kv7500Config) -> anyhow::Result<Self> {
+    pub async fn create(config: AzdFromKvConfig) -> anyhow::Result<Self> {
         let mut connection = HotLinkConnection::connect(&config).await?;
         let state = AzdState::create(&mut connection).await?;
 
         Ok(Self {
-            config,
+            // config,
             connection,
             state,
         })
@@ -37,10 +37,10 @@ impl AzdKvDirectClient {
     // TODO:タイムアウトは考慮されていない
     pub async fn wait_can_command(&mut self) -> anyhow::Result<()> {
         loop {
-            info!("loop in wait_can_command");
+            // info!("loop in wait_can_command");
             self.update_state().await?;
 
-            info!("{:?}", self.state);
+            // info!("{:?}", self.state);
             if self.state.is_ready && !self.state.is_alarm {
                 break;
             }
@@ -51,10 +51,10 @@ impl AzdKvDirectClient {
 
     pub async fn wait_start_move(&mut self) -> anyhow::Result<()> {
         loop {
-            info!("loop in wait start move");
+            // info!("loop in wait start move");
             self.update_state().await?;
 
-            info!("{:?}", self.state);
+            // info!("{:?}", self.state);
             if self.state.is_move && !self.state.is_alarm {
                 break;
             }
@@ -65,10 +65,10 @@ impl AzdKvDirectClient {
 
     pub async fn check_finish_move(&mut self) -> anyhow::Result<()> {
         loop {
-            info!("loop in check finish move");
+            // info!("loop in check finish move");
             self.update_state().await?;
 
-            info!("{:?}", self.state);
+            // info!("{:?}", self.state);
             if self.state.is_finish_move && !self.state.is_alarm {
                 break;
             }
@@ -81,7 +81,7 @@ impl AzdKvDirectClient {
 
         // トリガーのオフ（念のため）
         let command = make_command_direct_move(false, point, speed);
-        info!("send command :{:?}", command);
+        // info!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -93,7 +93,7 @@ impl AzdKvDirectClient {
 
         // トリガーオン
         let command = make_command_direct_move(true, point, speed);
-        info!("send command :{:?}", command);
+        // info!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -104,7 +104,7 @@ impl AzdKvDirectClient {
         self.wait_start_move().await?;
 
         let command = make_command_direct_move(false, point, speed);
-        info!("send command :{:?}", command);
+        // info!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -123,7 +123,7 @@ impl AzdKvDirectClient {
 
         // トリガーのオフ（念のため）
         let command = make_command_direct_move(false, point, speed);
-        info!("send command :{:?}", command);
+        // info!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -135,7 +135,7 @@ impl AzdKvDirectClient {
 
         // トリガーオン
         let command = make_command_direct_move(true, point, speed);
-        info!("send command :{:?}", command);
+        // info!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -159,7 +159,7 @@ impl AzdKvDirectClient {
         self.wait_can_command().await?;
 
         let command = make_command_direct_move(false, point, speed);
-        info!("send command :{:?}", command);
+        // info!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -226,14 +226,14 @@ struct AzdState {
     is_alarm: bool,
     is_move: bool,
     is_finish_move: bool,
-    detection_position: i32,
-    detection_velocity: i32,
+    // detection_position: i32,
+    // detection_velocity: i32,
 }
 impl AzdState {
     async fn create(connection: &mut HotLinkConnection) -> anyhow::Result<Self> {
         let response = connection.send_command("RDS W00.H 8\r".to_string()).await?;
 
-        info!("get response");
+        // info!("get response");
         let state = AzdState::parse_response(response)?;
         Ok(state)
     }
@@ -246,27 +246,28 @@ impl AzdState {
             // info!("{:?}", device);
             vec.push(device);
         }
-        info!("固定I/O::{:016b}", vec[2]);
+        // info!("固定I/O::{:016b}", vec[2]);
         let is_ready = vec[2] & (1 << 5) != 0;
         let is_alarm = vec[2] & (1 << 7) != 0;
 
         let is_move = vec[2] & (1 << 1) != 0;
         let is_finish_move = vec[2] & (1 << 2) != 0;
 
-        let detection_position = i32_from_2u16(vec[4], vec[5]);
-        let detection_velocity = i32_from_2u16(vec[6], vec[7]);
+        // let detection_position = i32_from_2u16(vec[4], vec[5]);
+        // let detection_velocity = i32_from_2u16(vec[6], vec[7]);
 
         Ok(Self {
             is_ready,
             is_alarm,
             is_move,
             is_finish_move,
-            detection_position,
-            detection_velocity,
+            // detection_position,
+            // detection_velocity,
         })
     }
 }
 
+#[allow(dead_code)]
 fn i32_from_2u16(lower: u16, upper: u16) -> i32 {
     // 上位下位の概念がいまいち分からんがオリエンタルモーターのUMに合わせた形に
     let upper = upper.to_le_bytes();

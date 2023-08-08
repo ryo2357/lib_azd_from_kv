@@ -3,14 +3,14 @@ use tokio::{
     net::TcpStream,
 };
 
-use super::config::Kv7500Config;
+use super::config::AzdFromKvConfig;
 
 pub struct HotLinkConnection {
     connection: TcpStream,
 }
 
 impl HotLinkConnection {
-    pub async fn connect(config: &Kv7500Config) -> anyhow::Result<Self> {
+    pub async fn connect(config: &AzdFromKvConfig) -> anyhow::Result<Self> {
         let connection = TcpStream::connect(&config.address).await?;
 
         Ok(Self { connection })

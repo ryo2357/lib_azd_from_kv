@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use mylogger::info;
 
 fn main() -> anyhow::Result<()> {
@@ -60,7 +61,7 @@ fn convert_test() {
 }
 
 fn convert_test_2() {
-    let true_num = -5000i32;
+    // let true_num = -5000i32;
     let true_num = 5000i32;
     info!("i32:{:?}", true_num);
 
