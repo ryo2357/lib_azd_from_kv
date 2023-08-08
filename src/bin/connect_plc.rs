@@ -4,6 +4,8 @@ use tokio::{
     net::TcpStream,
 };
 
+use azd_from_kv::{client, config};
+
 use mylogger::info;
 
 #[tokio::main]
@@ -23,14 +25,14 @@ async fn main() -> anyhow::Result<()> {
 
 fn config_test() {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
 
     info!("{:?}", config);
 }
 
 async fn connect_test() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     let mut stream = TcpStream::connect(&config.address).await?;
     info!("connected");
 
@@ -49,7 +51,7 @@ async fn connect_test() -> anyhow::Result<()> {
 
 async fn read_test() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     let mut stream = TcpStream::connect(&config.address).await?;
     info!("connected");
 
@@ -77,7 +79,7 @@ async fn read_test() -> anyhow::Result<()> {
 
 async fn write_test() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     let mut stream = TcpStream::connect(&config.address).await?;
     info!("connected");
 
@@ -99,9 +101,9 @@ async fn write_test() -> anyhow::Result<()> {
 
 async fn struct_test() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+    let mut azd = client::AzdKvDirectClient::create(config).await?;
 
     azd.info_state().await?;
 
@@ -110,9 +112,9 @@ async fn struct_test() -> anyhow::Result<()> {
 
 async fn command_verification() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+    let mut azd = client::AzdKvDirectClient::create(config).await?;
 
     // wait_until_enter();
     // azd.info_state().await?;
@@ -150,9 +152,9 @@ async fn command_verification() -> anyhow::Result<()> {
 
 async fn command_verification_2() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+    let mut azd = client::AzdKvDirectClient::create(config).await?;
 
     // パラメータの書き込み
     wait_until_enter();
@@ -246,9 +248,9 @@ fn make_command_direct_move(trigger: bool, point: i32, speed: i32) -> String {
 
 async fn client_test() -> anyhow::Result<()> {
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+    let mut azd = client::AzdKvDirectClient::create(config).await?;
 
     // 動作
     wait_until_enter();
@@ -266,9 +268,9 @@ async fn client_test() -> anyhow::Result<()> {
 async fn client_test_2() -> anyhow::Result<()> {
     // クライアントを管理するスレッドで動かすのがよさそう
     dotenv().ok();
-    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    let config = config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+    let mut azd = client::AzdKvDirectClient::create(config).await?;
 
     // 動作
     wait_until_enter();
