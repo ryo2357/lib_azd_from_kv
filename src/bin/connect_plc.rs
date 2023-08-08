@@ -15,7 +15,8 @@ async fn main() -> anyhow::Result<()> {
     // write_test().await?;
     // struct_test().await?;
     // command_verification().await?;
-    command_verification_2().await?;
+    // command_verification_2().await?;
+    client_test_2().await?;
 
     Ok(())
 }
@@ -100,7 +101,7 @@ async fn struct_test() -> anyhow::Result<()> {
     dotenv().ok();
     let config = kv7500::config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdClient::create(config).await?;
+    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
 
     azd.info_state().await?;
 
@@ -111,7 +112,7 @@ async fn command_verification() -> anyhow::Result<()> {
     dotenv().ok();
     let config = kv7500::config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdClient::create(config).await?;
+    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
 
     // wait_until_enter();
     // azd.info_state().await?;
@@ -151,7 +152,7 @@ async fn command_verification_2() -> anyhow::Result<()> {
     dotenv().ok();
     let config = kv7500::config::Kv7500Config::from_env().unwrap();
     info!("get config");
-    let mut azd = kv7500::client::AzdClient::create(config).await?;
+    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
 
     // パラメータの書き込み
     wait_until_enter();
@@ -241,4 +242,47 @@ fn make_command_direct_move(trigger: bool, point: i32, speed: i32) -> String {
         driving_current
     );
     command
+}
+
+async fn client_test() -> anyhow::Result<()> {
+    dotenv().ok();
+    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    info!("get config");
+    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+
+    // 動作
+    wait_until_enter();
+    azd.direct_move(9000, 500).await?;
+
+    azd.check_finish_move().await?;
+
+    azd.direct_move(0, 3000).await?;
+
+    azd.check_finish_move().await?;
+
+    Ok(())
+}
+
+async fn client_test_2() -> anyhow::Result<()> {
+    // クライアントを管理するスレッドで動かすのがよさそう
+    dotenv().ok();
+    let config = kv7500::config::Kv7500Config::from_env().unwrap();
+    info!("get config");
+    let mut azd = kv7500::client::AzdKvDirectClient::create(config).await?;
+
+    // 動作
+    wait_until_enter();
+    azd.throw_command_direct_move(9000, 500).await?;
+
+    azd.wait_start_move().await?;
+    azd.throw_command_direct_move_trigger_off(9000, 500).await?;
+    azd.check_finish_move().await?;
+
+    azd.throw_command_direct_move(0, 4000).await?;
+
+    azd.wait_start_move().await?;
+    azd.throw_command_direct_move_trigger_off(0, 2000).await?;
+    azd.check_finish_move().await?;
+
+    Ok(())
 }
