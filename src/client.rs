@@ -1,4 +1,4 @@
-use log::{debug, error, info};
+use log::{error, info};
 
 use super::config::AzdFromKvConfig;
 use super::connection::HotLinkConnection;
