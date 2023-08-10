@@ -1,4 +1,4 @@
-use log::{error, info};
+use log::{debug, error, info};
 
 use super::config::AzdFromKvConfig;
 use super::connection::HotLinkConnection;
@@ -37,10 +37,10 @@ impl AzdKvDirectClient {
     // TODO:タイムアウトは考慮されていない
     pub async fn wait_can_command(&mut self) -> anyhow::Result<()> {
         loop {
-            // info!("loop in wait_can_command");
+            // debug!("loop in wait_can_command");
             self.update_state().await?;
 
-            // info!("{:?}", self.state);
+            // debug!("{:?}", self.state);
             if self.state.is_ready && !self.state.is_alarm {
                 break;
             }
@@ -51,10 +51,10 @@ impl AzdKvDirectClient {
 
     pub async fn wait_start_move(&mut self) -> anyhow::Result<()> {
         loop {
-            // info!("loop in wait start move");
+            // debug!("loop in wait start move");
             self.update_state().await?;
 
-            // info!("{:?}", self.state);
+            // debug!("{:?}", self.state);
             if self.state.is_move && !self.state.is_alarm {
                 break;
             }
@@ -65,10 +65,10 @@ impl AzdKvDirectClient {
 
     pub async fn check_finish_move(&mut self) -> anyhow::Result<()> {
         loop {
-            // info!("loop in check finish move");
+            // debug!("loop in check finish move");
             self.update_state().await?;
 
-            // info!("{:?}", self.state);
+            // debug!("{:?}", self.state);
             if self.state.is_finish_move && !self.state.is_alarm {
                 break;
             }
@@ -81,7 +81,7 @@ impl AzdKvDirectClient {
 
         // トリガーのオフ（念のため）
         let command = make_command_direct_move(false, point, speed);
-        // info!("send command :{:?}", command);
+        // debug!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -93,7 +93,7 @@ impl AzdKvDirectClient {
 
         // トリガーオン
         let command = make_command_direct_move(true, point, speed);
-        // info!("send command :{:?}", command);
+        // debug!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -104,7 +104,7 @@ impl AzdKvDirectClient {
         self.wait_start_move().await?;
 
         let command = make_command_direct_move(false, point, speed);
-        // info!("send command :{:?}", command);
+        // debug!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -123,7 +123,7 @@ impl AzdKvDirectClient {
 
         // トリガーのオフ（念のため）
         let command = make_command_direct_move(false, point, speed);
-        // info!("send command :{:?}", command);
+        // debug!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -135,7 +135,7 @@ impl AzdKvDirectClient {
 
         // トリガーオン
         let command = make_command_direct_move(true, point, speed);
-        // info!("send command :{:?}", command);
+        // debug!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -159,7 +159,7 @@ impl AzdKvDirectClient {
         self.wait_can_command().await?;
 
         let command = make_command_direct_move(false, point, speed);
-        // info!("send command :{:?}", command);
+        // debug!("send command :{:?}", command);
         let response = self.connection.send_command(command).await?;
         if response != "OK\r\n" {
             error!("response is {:?}", response);
@@ -233,7 +233,7 @@ impl AzdState {
     async fn create(connection: &mut HotLinkConnection) -> anyhow::Result<Self> {
         let response = connection.send_command("RDS W00.H 8\r".to_string()).await?;
 
-        // info!("get response");
+        // debug!("get response");
         let state = AzdState::parse_response(response)?;
         Ok(state)
     }
@@ -243,10 +243,10 @@ impl AzdState {
         let mut vec: Vec<u16> = Vec::new();
         for i in iter {
             let device: u16 = u16::from_str_radix(i, 16)?;
-            // info!("{:?}", device);
+            // debug!("{:?}", device);
             vec.push(device);
         }
-        // info!("固定I/O::{:016b}", vec[2]);
+        // debug!("固定I/O::{:016b}", vec[2]);
         let is_ready = vec[2] & (1 << 5) != 0;
         let is_alarm = vec[2] & (1 << 7) != 0;
 

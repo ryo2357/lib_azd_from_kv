@@ -3,13 +3,13 @@ use mylogger::info;
 
 fn main() -> anyhow::Result<()> {
     mylogger::init();
-    // bit_test();
-    // convert_test_4();
-    func_test();
+    // bit_verify();
+    // convert_verify_4();
+    func_verify();
     Ok(())
 }
 
-fn bit_test() {
+fn bit_verify() {
     let device = 1120u16;
 
     // 10001100000
@@ -35,7 +35,7 @@ fn bit_test() {
     }
 }
 
-fn convert_test() {
+fn convert_verify() {
     // let device = 1120u16;
     // info!("u16:{:?}", device);
     // let array = device.to_le_bytes();
@@ -60,7 +60,7 @@ fn convert_test() {
     info!("i16:{:?}", device_i16);
 }
 
-fn convert_test_2() {
+fn convert_verify_2() {
     // let true_num = -5000i32;
     let true_num = 5000i32;
     info!("i32:{:?}", true_num);
@@ -84,7 +84,7 @@ fn i32_from_2u16(upper: u16, lower: u16) -> i32 {
     i32::from_le_bytes([upper[0], upper[1], lower[0], lower[1]])
 }
 
-fn convert_test_3() {
+fn convert_verify_3() {
     let command = "WRS W1F.H 9 0001\r".to_string();
     info!("command: {:?}", command);
 
@@ -120,7 +120,7 @@ fn convert_test_3() {
     info!("command from format!: {:?}", command);
 }
 
-fn convert_test_4() {
+fn convert_verify_4() {
     let test_num = 5000i32;
     let test_num2 = -5000i32;
 
@@ -141,7 +141,7 @@ fn convert_test_4() {
     info!("-5000: {:04X} {:04X}", lower, upper);
 }
 
-fn func_test() {
+fn func_verify() {
     let command = make_move_command(true);
     info!("command: {:?}", command);
 

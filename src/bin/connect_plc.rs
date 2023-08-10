@@ -12,26 +12,26 @@ use mylogger::info;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     mylogger::init();
-    // config_test();
-    // connect_test().await?;
-    // read_test().await?;
-    // write_test().await?;
-    // struct_test().await?;
+    // config_verify();
+    // connect_verify().await?;
+    // read_verify().await?;
+    // write_verify().await?;
+    // struct_verify().await?;
     // command_verification().await?;
     // command_verification_2().await?;
-    client_test_2().await?;
+    client_verify_2().await?;
 
     Ok(())
 }
 
-fn config_test() {
+fn config_verify() {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
 
     info!("{:?}", config);
 }
 
-async fn connect_test() -> anyhow::Result<()> {
+async fn connect_verify() -> anyhow::Result<()> {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     let mut stream = TcpStream::connect(&config.address).await?;
@@ -50,7 +50,7 @@ async fn connect_test() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn read_test() -> anyhow::Result<()> {
+async fn read_verify() -> anyhow::Result<()> {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     let mut stream = TcpStream::connect(&config.address).await?;
@@ -78,7 +78,7 @@ async fn read_test() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn write_test() -> anyhow::Result<()> {
+async fn write_verify() -> anyhow::Result<()> {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     let mut stream = TcpStream::connect(&config.address).await?;
@@ -100,7 +100,7 @@ async fn write_test() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn struct_test() -> anyhow::Result<()> {
+async fn struct_verify() -> anyhow::Result<()> {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     info!("get config");
@@ -247,7 +247,7 @@ fn make_command_direct_move(trigger: bool, point: i32, speed: i32) -> String {
     command
 }
 
-async fn client_test() -> anyhow::Result<()> {
+async fn client_verify() -> anyhow::Result<()> {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     info!("get config");
@@ -266,7 +266,7 @@ async fn client_test() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn client_test_2() -> anyhow::Result<()> {
+async fn client_verify_2() -> anyhow::Result<()> {
     dotenv().ok();
     let config = config::AzdFromKvConfig::from_env().unwrap();
     info!("get config");
