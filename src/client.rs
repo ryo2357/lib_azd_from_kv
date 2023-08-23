@@ -185,7 +185,7 @@ fn make_command_direct_move(trigger: bool, point: i32, speed: i32) -> String {
     let detect_position_lower = u16::from_le_bytes([detect_position[0], detect_position[1]]);
     let detect_position_upper = u16::from_le_bytes([detect_position[2], detect_position[3]]);
 
-    // 1000 ⇒ 1mm/sec
+    // 1000 ⇒ 10mm/sec
 
     let detect_speed = speed; // 移動速度
     let detect_speed = detect_speed.to_le_bytes();
